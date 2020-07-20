@@ -5,4 +5,5 @@ urlpatterns = [
     path('login', views.loginView, name='login'),
     path('logout', views.logoutView, name='logout'),
     path('SignUp', views.SignUp, name='SignUp'),
+    path('JoinPoll/<str:pk>', views.JoinPoll, name='JoinPoll'),
 ]

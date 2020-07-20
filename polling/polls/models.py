@@ -6,7 +6,7 @@ from django.db import models
 
 
 class Polls(models.Model):
-    UniqueId = models.CharField(max_length=100)
+    UniqueId = models.CharField(max_length=100, unique=True)
     Title = models.CharField(max_length=100)
     Description = models.CharField(max_length=100)
     password = models.CharField(max_length=100)

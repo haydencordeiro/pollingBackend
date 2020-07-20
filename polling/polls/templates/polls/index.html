@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -147,6 +148,8 @@
     </div>
 
     <!-- Login modal end -->
+
+
     <!-- Signup Modal -->
     <div
       class="modal fade"
@@ -259,6 +262,7 @@
     </div>
 
     <!-- Signup modal end -->
+    
     <!-- jumbotron -->
     <div class="jumbotron m-0 mb-2">
       <h1 class="display-4">Hello, Welcome!</h1>
@@ -280,7 +284,80 @@
     </h1>
     <!-- card -->
 
-    {% for i in AllActive %} {% if forloop.counter0|divisibleby:"2" %}
+
+{% for i in AllActive %}
+           <!-- Join Poll Modal -->
+           <div
+           class="modal fade"
+           id="JoinPoll{{i.id}}"
+           tabindex="-1"
+           role="dialog"
+           aria-labelledby="{{i.id}}"
+           aria-hidden="true"
+         >
+           <div class="modal-dialog">
+             <div class="modal-content">
+               <div class="modal-header">
+                 <h5 class="modal-title" >{{i.Title}}</h5>
+                 <button
+                   type="button"
+                   class="close"
+                   data-dismiss="modal"
+                   aria-label="Close"
+                 >
+                   <span aria-hidden="true">&times;</span>
+                 </button>
+               </div>
+               <form method="POST" action="{% url 'JoinPoll' i.id %}">
+                 {% csrf_token %}
+                 <div class="modal-body">
+   
+     
+                   <div class="input-group mb-3">
+                     <div class="input-group-append">
+                       <span class="input-group-text" id="basic-addon2"
+                         >password</span
+                       >
+                     </div>
+                     <input
+                       type="password"
+                       class="form-control"
+                       placeholder="Poll password"
+                       aria-label="Poll password"
+                       aria-describedby="basic-addon2"
+                       name="PollPassword{{i.id}}"
+                     />
+                   </div>
+                 </div>
+               
+               <div class="modal-footer">
+                 <button
+                   type="button"
+                   class="btn btn-secondary"
+                   data-dismiss="modal"
+                 >
+                   Close
+                 </button>
+                 <button type="submit" class="btn btn-primary">Join</button>
+               </form>
+               </div>
+             </div>
+           </div>
+         </div>
+        {% endfor %}
+     
+         <!-- Join Poll  modal end -->
+
+
+
+
+    {% for i in AllActive %} 
+ 
+    
+    
+    
+    
+    {% if forloop.counter0|divisibleby:"2" %}
     <div class="row">
       {% endif %}
 
@@ -291,7 +368,13 @@
             <p class="card-text">
               {{i.Description}}
             </p>
-            <a href="#" class="btn btn-primary">Join Poll</a>
+            <a
+            class="btn btn-primary"
+            href="#JoinPoll{{i.id}}"
+            data-toggle="modal"
+            data-target="#JoinPoll{{i.id}}"
+            >Join Poll</a
+          >
           </div>
         </div>
       </div>

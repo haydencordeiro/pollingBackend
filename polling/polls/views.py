@@ -49,3 +49,14 @@ def SignUp(request):
         user.save()
         print(username, password, FirstName, LastName, email)
     return HttpResponsePermanentRedirect(reverse('homepage'))
+
+
+def JoinPoll(request, pk):
+    tempPoll = Polls.objects.get(id=pk)
+    print(request.POST['PollPassword'+str(tempPoll.id)])
+
+    if tempPoll.password == request.POST['PollPassword'+str(tempPoll.id)]:
+        print('yes')
+    else:
+        print('no')
+    return HttpResponsePermanentRedirect(reverse('homepage'))
