@@ -22,3 +22,17 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Question, QuestionAdmin)
+
+
+class UpvoteLogsAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in UpvoteLogs._meta.fields]
+
+
+admin.site.register(UpvoteLogs, UpvoteLogsAdmin)
+
+
+class DownvoteLogsAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in DownvoteLogs._meta.fields]
+
+
+admin.site.register(DownvoteLogs, DownvoteLogsAdmin)

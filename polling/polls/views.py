@@ -1,4 +1,4 @@
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, redirect
 from django.http import HttpResponse
 from .models import *
 from django.contrib.auth import authenticate, login, logout
@@ -56,7 +56,25 @@ def JoinPoll(request, pk):
     print(request.POST['PollPassword'+str(tempPoll.id)])
 
     if tempPoll.password == request.POST['PollPassword'+str(tempPoll.id)]:
-        print('yes')
+        return redirect('/pollView/1')
     else:
-        print('no')
-    return HttpResponsePermanentRedirect(reverse('homepage'))
+        return HttpResponsePermanentRedirect(reverse('homepage'))
+
+
+def pollView(request, pk):
+
+    Title = Polls.objects.get(id=pk)
+    AllActive = Question.objects.filter(poll=Title)
+    context = {
+        'Title': Title.Title,
+        'AllActive': AllActive
+    }
+    return render(request, 'polls/Inpoll.html', context)
+
+
+def UpVote(request, pk):
+    pass
+
+
+def DownVote(request, pk):
+    pass

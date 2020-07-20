@@ -16,16 +16,39 @@ class Polls(models.Model):
         on_delete=models.CASCADE,
     )
 
+    def __str__(self):
+        return str(self.Title)
+
 
 class UserModel(models.Model):
     Name = models.CharField(max_length=100)
     CurrentPoll = models.ForeignKey(
         Polls, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.Name
+
 
 class Question(models.Model):
+    poll = models.ForeignKey(
+        Polls, on_delete=models.CASCADE, null=True)
     QuestionText = models.CharField(max_length=100)
     Upvotes = models.IntegerField()
     Downvotes = models.IntegerField()
     User = models.ForeignKey(
         UserModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.QuestionText
+
+
+class UpvoteLogs(models.Model):
+    Question = models.ForeignKey(
+        Question, on_delete=models.CASCADE)
+    IP = models.CharField(max_length=200)
+
+
+class DownvoteLogs(models.Model):
+    Question = models.ForeignKey(
+        Question, on_delete=models.CASCADE)
+    IP = models.CharField(max_length=200)
