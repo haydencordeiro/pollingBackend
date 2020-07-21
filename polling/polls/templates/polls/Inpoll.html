@@ -267,7 +267,7 @@
 
 
     <h1 class="display-4" align="center">
-        Title
+        {{Title}}
       </h1>
     {% for i in AllActive %} 
  
@@ -278,16 +278,23 @@
       <div class="col-sm-6 mt-2">
         <div class="card border-dark">
           <div class="card-body">
-            <h5 class="card-title">{{i.QuestionText}}</h5>
+            <h5 class="card-title">{{i.0.QuestionText}}</h5>
             <p class="card-text">
-              {{i.Description}}
+              {{i.0.Description}}
             </p>
-            <form action="{% url 'UpVote' i.id }">
+            {% if i.1 %}
+            {% else %}
+            <form action="{% url 'UpVote' i.0.id PollId %}">
                 <button type="submit" class="btn btn-success">Upvote</button>
             </form>
-            <form action="{% url 'DownVote' i.id }">
+            {% endif %}
+
+            {% if i.2 %}
+            {% else %}
+            <form action="{% url 'DownVote' i.0.id PollId %}">
                 <button type="submit" class="btn btn-danger">Downvote</button>
             </form>
+            {% endif %}
           </div>
         </div>
       </div>

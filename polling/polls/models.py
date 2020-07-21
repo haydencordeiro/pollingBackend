@@ -21,6 +21,7 @@ class Polls(models.Model):
 
 
 class UserModel(models.Model):
+    Ip = models.CharField(max_length=100, null=True)
     Name = models.CharField(max_length=100)
     CurrentPoll = models.ForeignKey(
         Polls, on_delete=models.CASCADE)
@@ -35,6 +36,7 @@ class Question(models.Model):
     QuestionText = models.CharField(max_length=100)
     Upvotes = models.IntegerField()
     Downvotes = models.IntegerField()
+    Completed = models.BooleanField(default=False)
     User = models.ForeignKey(
         UserModel, on_delete=models.CASCADE)
 
@@ -45,10 +47,12 @@ class Question(models.Model):
 class UpvoteLogs(models.Model):
     Question = models.ForeignKey(
         Question, on_delete=models.CASCADE)
-    IP = models.CharField(max_length=200)
+    UserFK = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE, null=True)
 
 
 class DownvoteLogs(models.Model):
     Question = models.ForeignKey(
         Question, on_delete=models.CASCADE)
-    IP = models.CharField(max_length=200)
+    UserFK = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE, null=True)
