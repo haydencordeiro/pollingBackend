@@ -141,5 +141,14 @@ def DownVote(request, pk, pid):
     return pollView(request, pid)
 
 
-def AddQuestion(request):
-    pass
+def AddQuestion(request, pk):
+
+    question = Question(poll=Polls.objects.get(id=pk),
+                        QuestionText=request.POST['questionAdd'],
+                        Upvotes=0,
+                        Downvotes=0,
+                        User=UserModel.objects.filter(
+        Ip=get_client_ip(request)[0]).first()
+    )
+    question.save()
+    return pollView(request, pk)

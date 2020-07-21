@@ -9,7 +9,7 @@ urlpatterns = [
     path('JoinPoll/<str:pk>', views.JoinPoll, name='JoinPoll'),
     path('UpVote/<str:pk>/<str:pid>/', views.UpVote, name='UpVote'),
     path('CreatePoll', views.CreatePoll, name='CreatePoll'),
-
-
     path('DownVote/<str:pk>/<str:pid>/', views.DownVote, name='DownVote'),
+    path('AddQuestion/<str:pk>/', views.AddQuestion, name='AddQuestion'),
+
 ]
