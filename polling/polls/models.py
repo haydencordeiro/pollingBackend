@@ -34,8 +34,6 @@ class Question(models.Model):
     poll = models.ForeignKey(
         Polls, on_delete=models.CASCADE, null=True)
     QuestionText = models.CharField(max_length=100)
-    Upvotes = models.IntegerField()
-    Downvotes = models.IntegerField()
     Completed = models.BooleanField(default=False)
     User = models.ForeignKey(
         UserModel, on_delete=models.CASCADE)

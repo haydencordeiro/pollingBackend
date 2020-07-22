@@ -3,17 +3,13 @@ from django.http import HttpResponse
 from .models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponsePermanentRedirect
+from django.http import HttpResponse, HttpResponsePermanentRedirect, HttpResponseRedirect
 # installed
 from ipware import get_client_ip
 
 
 def homepage(request):
     ip, is_routable = get_client_ip(request)
-    print()
-    print()
-    print()
-    print(ip)
 
     print(request.user.username)
     AllActive = Polls.objects.all()
@@ -64,7 +60,6 @@ def JoinPoll(request, pk):
     ip, is_routable = get_client_ip(request)
     tempPoll = Polls.objects.get(id=pk)
     UsersName = request.POST['UsersName'+pk]
-    print(request.POST['PollPassword'+str(tempPoll.id)])
 
     if tempPoll.password == request.POST['PollPassword'+str(tempPoll.id)]:
         tempUser = UserModel(Name=UsersName,
@@ -78,7 +73,7 @@ def JoinPoll(request, pk):
 
 
 def CreatePoll(request):
-    print(request.POST)
+
     poll = Polls(UniqueId=request.POST['uid'],
                  Title=request.POST['PollTitle'],
                  Description=request.POST['PollDesc'],
@@ -109,8 +104,12 @@ def pollView(request, pk):
             temp.append(True)
         else:
             temp.append(False)
-        UpVote.append(temp)
 
+        temp.append(len(UpvoteLogs.objects.filter(Question=i)) -
+                    len(DownvoteLogs.objects.filter(Question=i)))
+        UpVote.append(temp)
+        # print(temp)
+    UpVote.sort(key=lambda x: x[3], reverse=True)
     AllActive = UpVote
     # print(UpVote)
 
@@ -129,7 +128,7 @@ def UpVote(request, pk, pid):
     temp = UpvoteLogs(UserFK=currentUser,
                       Question=Question.objects.get(id=pk))
     temp.save()
-    return pollView(request, pid)
+    return HttpResponseRedirect(f'/pollView/{pid}')
 
 
 def DownVote(request, pk, pid):
@@ -138,17 +137,19 @@ def DownVote(request, pk, pid):
     temp = DownvoteLogs(UserFK=currentUser,
                         Question=Question.objects.get(id=pk))
     temp.save()
-    return pollView(request, pid)
+    return HttpResponseRedirect(f'/pollView/{pid}')
 
 
 def AddQuestion(request, pk):
 
     question = Question(poll=Polls.objects.get(id=pk),
                         QuestionText=request.POST['questionAdd'],
-                        Upvotes=0,
-                        Downvotes=0,
                         User=UserModel.objects.filter(
         Ip=get_client_ip(request)[0]).first()
     )
     question.save()
-    return pollView(request, pk)
+    return HttpResponseRedirect(f'/pollView/{pk}')
+
+
+def Backend(request):
+    pass
