@@ -350,29 +350,21 @@
       <div class="col-sm-6 mt-2">
         <div class="card border-dark">
           <div class="card-body">
-            {% if i.0.Completed %}
-            <h5 class="card-title" style="text-decoration: line-through;">{{i.0.QuestionText}}</h5>
-            {% else%}
-            <h5 class="card-title">{{i.0.QuestionText}}</h5>
-
-            
+            <h5 class="card-title" >{{i.QuestionText}}</h5>
             <p class="card-text">
-              {{i.0.Description}}
-            </p>
-            {% if i.1 %}
+                Author:{{i.User.Name}}
+              </p>
+            {% if i.Completed %}
             {% else %}
-            <form action="{% url 'UpVote' i.0.id PollId %}">
-                <button type="submit" class="btn btn-success">Upvote</button>
+            <form action="{% url 'CompleteQuestion' i.id PollId %}">
+                <button type="submit" class="btn btn-success">Completed</button>
             </form>
             {% endif %}
+            <form action="{% url 'DeleteQuestion' i.id PollId %}">
+                
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
 
-            {% if i.2 %}
-            {% else %}
-            <form action="{% url 'DownVote' i.0.id PollId %}">
-                <button type="submit" class="btn btn-danger">Downvote</button>
-            </form>
-            {% endif %}
-            {% endif %}
           </div>
         </div>
       </div>

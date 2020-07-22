@@ -9,14 +9,19 @@ from ipware import get_client_ip
 
 
 def homepage(request):
-    ip, is_routable = get_client_ip(request)
+    if request.user.is_authenticated:
+        AllActive = Polls.objects.filter(Author=request.user)
+        context = {
+            'AllActive': AllActive
+        }
+        return render(request, 'polls/loggedindex.html', context)
 
-    print(request.user.username)
-    AllActive = Polls.objects.all()
-    context = {
-        'AllActive': AllActive
-    }
-    return render(request, 'polls/index.html', context)
+    else:
+        AllActive = Polls.objects.all()
+        context = {
+            'AllActive': AllActive
+        }
+        return render(request, 'polls/index.html', context)
 
 
 def loginView(request):
@@ -56,20 +61,23 @@ def SignUp(request):
 
 
 def JoinPoll(request, pk):
-
-    ip, is_routable = get_client_ip(request)
-    tempPoll = Polls.objects.get(id=pk)
-    UsersName = request.POST['UsersName'+pk]
-
-    if tempPoll.password == request.POST['PollPassword'+str(tempPoll.id)]:
-        tempUser = UserModel(Name=UsersName,
-                             Ip=ip,
-                             CurrentPoll=tempPoll
-                             )
-        tempUser.save()
+    if request.user.is_authenticated:
         return redirect('/pollView/'+str(pk))
+
     else:
-        return HttpResponsePermanentRedirect(reverse('homepage'))
+        ip, is_routable = get_client_ip(request)
+        tempPoll = Polls.objects.get(id=pk)
+        UsersName = request.POST['UsersName'+pk]
+
+        if tempPoll.password == request.POST['PollPassword'+str(tempPoll.id)]:
+            tempUser = UserModel(Name=UsersName,
+                                 Ip=ip,
+                                 CurrentPoll=tempPoll
+                                 )
+            tempUser.save()
+            return redirect('/pollView/'+str(pk))
+        else:
+            return HttpResponsePermanentRedirect(reverse('homepage'))
 
 
 def CreatePoll(request):
@@ -84,41 +92,53 @@ def CreatePoll(request):
 
 
 def pollView(request, pk):
-    currentUser = UserModel.objects.filter(
-        Ip=get_client_ip(request)[0]).first()
-    upvotes = UpvoteLogs.objects.filter(UserFK=currentUser)
-    upvotes = [i.Question.id for i in upvotes]
-    downvotes = DownvoteLogs.objects.filter(UserFK=currentUser)
-    downvotes = [i.Question.id for i in downvotes]
+    if request.user.is_authenticated:
 
-    Title = Polls.objects.get(id=pk)
-    AllActive = Question.objects.filter(poll=Title)
-    UpVote = []
-    for i in AllActive:
-        temp = [i]
-        if i.id in upvotes:
-            temp.append(True)
-        else:
-            temp.append(False)
-        if i.id in downvotes:
-            temp.append(True)
-        else:
-            temp.append(False)
+        Title = Polls.objects.get(id=pk)
+        AllActive = Question.objects.filter(poll=Title)
 
-        temp.append(len(UpvoteLogs.objects.filter(Question=i)) -
-                    len(DownvoteLogs.objects.filter(Question=i)))
-        UpVote.append(temp)
-        # print(temp)
-    UpVote.sort(key=lambda x: x[3], reverse=True)
-    AllActive = UpVote
-    # print(UpVote)
+        context = {
+            'PollId': Title.id,
+            'Title': Title.Title,
+            'AllActive': AllActive
+        }
+        return render(request, 'polls/InpollAdmin.html', context)
+    else:
+        currentUser = UserModel.objects.filter(
+            Ip=get_client_ip(request)[0]).first()
+        upvotes = UpvoteLogs.objects.filter(UserFK=currentUser)
+        upvotes = [i.Question.id for i in upvotes]
+        downvotes = DownvoteLogs.objects.filter(UserFK=currentUser)
+        downvotes = [i.Question.id for i in downvotes]
 
-    context = {
-        'PollId': Title.id,
-        'Title': Title.Title,
-        'AllActive': AllActive
-    }
-    return render(request, 'polls/Inpoll.html', context)
+        Title = Polls.objects.get(id=pk)
+        AllActive = Question.objects.filter(poll=Title)
+        UpVote = []
+        for i in AllActive:
+            temp = [i]
+            if i.id in upvotes:
+                temp.append(True)
+            else:
+                temp.append(False)
+            if i.id in downvotes:
+                temp.append(True)
+            else:
+                temp.append(False)
+
+            temp.append(len(UpvoteLogs.objects.filter(Question=i)) -
+                        len(DownvoteLogs.objects.filter(Question=i)))
+            UpVote.append(temp)
+            # print(temp)
+        UpVote.sort(key=lambda x: x[3], reverse=True)
+        AllActive = UpVote
+        # print(UpVote)
+
+        context = {
+            'PollId': Title.id,
+            'Title': Title.Title,
+            'AllActive': AllActive
+        }
+        return render(request, 'polls/Inpoll.html', context)
 
 
 def UpVote(request, pk, pid):
@@ -153,3 +173,16 @@ def AddQuestion(request, pk):
 
 def Backend(request):
     pass
+
+
+def CompleteQuestion(request, pk, pid):
+    temp = Question.objects.get(id=pk)
+    temp.Completed = True
+    temp.save()
+    return HttpResponseRedirect(f'/pollView/{pid}')
+
+
+def DeleteQuestion(request, pk, pid):
+    temp = Question.objects.get(id=pk)
+    temp.delete()
+    return HttpResponseRedirect(f'/pollView/{pid}')

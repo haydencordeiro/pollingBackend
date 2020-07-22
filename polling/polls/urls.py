@@ -11,5 +11,11 @@ urlpatterns = [
     path('CreatePoll', views.CreatePoll, name='CreatePoll'),
     path('DownVote/<str:pk>/<str:pid>/', views.DownVote, name='DownVote'),
     path('AddQuestion/<str:pk>/', views.AddQuestion, name='AddQuestion'),
+    path('CompleteQuestion/<str:pk>/<str:pid>/',
+         views.CompleteQuestion, name='CompleteQuestion'),
+    path('DeleteQuestion/<str:pk>/<str:pid>/',
+         views.DeleteQuestion, name='DeleteQuestion'),
+
+
 
 ]
